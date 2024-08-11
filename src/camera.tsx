@@ -8,8 +8,6 @@ const CameraCapture = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraActive, setCameraActive] = useState(false);
 
-  console.log(cameraActive);
-
   // Определяем, какая камера будет использована в зависимости от устройства
   const getCameraConstraints = () => {
     const isMobileDevice = /Mobi|Android/i.test(navigator.userAgent);
@@ -36,6 +34,11 @@ const CameraCapture = () => {
         videoRef.current.srcObject = mediaStream;
         setStream(mediaStream); // Сохраняем ссылку на поток
         await videoRef.current.play();
+        
+        // Запуск видео в полноэкранном режиме
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen();
+        }
       }
     } catch (error) {
       console.error('Error accessing the camera', error);
@@ -50,6 +53,9 @@ const CameraCapture = () => {
       }
       setStream(null); // Очищаем состояние потока
       setCameraActive(false); // Выключаем камеру
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
     }
   };
 
