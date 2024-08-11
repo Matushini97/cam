@@ -7,10 +7,15 @@ const CameraCapture = () => {
   const [photo, setPhoto] = useState(null);
 
   const startCamera = async () => {
+    const constraints = {
+        video: {
+          facingMode: { exact: 'environment' } // 'environment' включает заднюю камеру
+        }
+      };
     try {
       // Проверяем, что videoRef.current существует перед доступом
       if (videoRef.current) {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
