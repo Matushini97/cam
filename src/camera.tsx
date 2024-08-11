@@ -2,25 +2,31 @@ import { useRef, useState } from 'react';
 import './App.css';  // Подключение файла стилей
 
 const CameraCapture = () => {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [photo, setPhoto] = useState(null);
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
+      // Проверяем, что videoRef.current существует перед доступом
+      if (videoRef.current) {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
     } catch (error) {
       console.error('Error accessing the camera', error);
     }
   };
 
   const takePhoto = () => {
-    const context = canvasRef.current.getContext('2d');
-    context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    const dataUrl = canvasRef.current.toDataURL('image/png');
-    setPhoto(dataUrl);
+    // Проверяем, что canvasRef.current и videoRef.current существуют перед доступом
+    if (canvasRef.current && videoRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      context?.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+      const dataUrl: any = canvasRef.current.toDataURL('image/png');
+      setPhoto(dataUrl);
+    }
   };
 
   return (
